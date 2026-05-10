@@ -24,7 +24,7 @@ public class HelloWorldController {
     HelloResponse response = new HelloResponse();
     response.setMessage("Hello from Spring Boot!");
     response.setTeam("BinaryBears");
-    response.setStudentIndexes(Arrays.asList(75626, 75381, 77332 ));
+    response.setStudentIndexes(Arrays.asList(75626, 75381, 77332));
     return response;
   }    
     
