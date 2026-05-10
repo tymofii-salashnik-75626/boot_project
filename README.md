@@ -63,5 +63,127 @@
 5. Widzimy komunikat "Elastic Beanstalk is launching your environment. This will take a few minutes." i czekamy, aż wszystko wystartuje
 6. W przyszłości wchodzimy na stronę Beanstalk [tutaj](https://eu-north-1.console.aws.amazon.com/elasticbeanstalk/)
 
+
+
+## Wdrażanie na platformie Azure App Service (Oleksandr Mandziuk 75381)
+
+1. Utworzyć darmowe konto studenckie Microsoft Azure (Azure for Students).
+2. Zrobić "Fork" oryginalnego repozytorium projektu na własne konto GitHub. Jest to wymagane, aby uzyskać pełne uprawnienia do konfiguracji automatycznego wdrażania (CI/CD) za pomocą GitHub Actions.
+3. W pasku wyszukiwania portalu Azure wpisać "App Services" i przejść do usługi.
+4. Kliknąć przycisk [Create] -> [Web App], aby uruchomić kreator konfiguracji.
+5. Proces tworzenia według kroków kreatora:
+1. Zakładka Basics
+1. Subscription - wybieramy Azure for Students.
+2. Resource Group - klikamy Create new i wpisujemy nazwę grupy (np. BinaryBearsGroup).
+3. Name - wpisujemy nazwę aplikacji: boot-project-binarybears (i zapamiętujemy, to będzie adres strony: (https://hello-binarybears-fabda0g2evdrfmfs.polandcentral-01.azurewebsites.net/).
+4. Publish - wybieramy Code.
+5. Runtime stack - wybieramy Java 21 (zgodnie z wersją projektu).
+6. Java web server stack - wybieramy Java SE (ponieważ Spring Boot ma wbudowany serwer).
+7. Operating System - wybieramy Linux.
+8. Pricing plan - upewniamy się, że wybrany jest darmowy plan Free F1 (nie zamierzamy płacić).
+9. Klikamy Next i przechodzimy do Review + create, a następnie Create.
+6. Czekamy na zakończenie tworzenia zasobu (komunikat "Deployment succeeded") i klikamy "Go to resource".
+7. Konfiguracja automatycznego wdrażania w zakładce Deployment Center:
+1. Z menu po lewej stronie wybieramy Deployment Center.
+2. Source - wybieramy GitHub.
+3. Autoryzujemy połączenie z kontem GitHub (jeśli wymaga).
+4. Organization - wybieramy swój profil GitHub z forkiem projektu.
+5. Repository - wybieramy nasze repozytorium z kodem (boot_project).
+6. Branch - wybieramy main.
+7. Authentication type - zostawiamy User-assigned identity.
+8. Klikamy Save na górze ekranu.
+8. Rozwiązywanie napotkanych problemów (Troubleshooting):
+1. Początkowa próba wdrożenia bez forka, za pomocą opcji "External Git", zakończyła się błędem "parking page".
+2. Wewnętrzny system wdrożeniowy Azure (KuduSync) ograniczał się do zwykłego kopiowania plików źródłowych, nie uruchamiając kompilacji Maven (brak gotowego pliku .jar).
+3. Rozwiązaniem było zastosowanie natywnej integracji z GitHubem (opisanej w kroku 7). Spowodowało to wygenerowanie pliku workflow na GitHubie, który przejął proces kompilacji i automatycznie przesłał działający plik .jar bezpośrednio na serwer Azure.
+9. Po zakończeniu budowania (GitHub Actions), w zakładce "Overview" w Azure sprawdzamy status (powinien być "Running").
+10. Klikamy przycisk "Browse", dopisujemy /hello do adresu w przeglądarce i sprawdzamy poprawność działania aplikacji.
+
+
+
+## Wdrażanie aplikacji Spring Boot na platformie Railway (Mykola Havryliuk 77332)
+
+### Przygotowanie aplikacji do wdrożenia
+
+1. Sprawdzenie poprawności działania aplikacji lokalnie
+    1. Uruchomienie projektu w środowisku IntelliJ IDEA
+    2. Weryfikacja poprawności działania endpointu `/hello`
+    3. Sprawdzenie zwracanego JSON-a z numerami indeksów członków zespołu
+    4. Test działania aplikacji pod adresem:
+       `http://localhost:8080/hello`
+
+2. Konfiguracja środowiska Java
+    1. Instalacja oraz konfiguracja JDK 25 (Eclipse Temurin)
+    2. Sprawdzenie wersji Java komendą:
+       `java -version`
+    3. Weryfikacja poprawności konfiguracji Maven:
+       `mvn -version`
+
+3. Budowanie aplikacji
+    1. W terminalu wykonujemy:
+       `mvn clean package`
+    2. Po poprawnym zbudowaniu projektu w katalogu `target/` został wygenerowany plik:
+       `demo-0.0.1-SNAPSHOT.jar`
+
+### Wdrażanie aplikacji na Railway (Mykola Havryliuk 77332)
+
+1. Rejestracja oraz logowanie do platformy Railway
+    1. Przechodzimy na stronę https://railway.app/
+    2. Logujemy się przy pomocy konta GitHub
+
+2. Przygotowanie repozytorium GitHub
+    1. Oryginalne repozytorium należało do innego członka zespołu
+    2. Railway wymaga dostępu właściciela repozytorium
+    3. Wykonałem Fork projektu na własne konto GitHub
+    4. Po wykonaniu Fork platforma Railway mogła uzyskać dostęp do kodu źródłowego
+
+3. Tworzenie projektu Railway
+    1. Klikamy przycisk **New Project**
+    2. Wybieramy opcję:
+       `Deploy from GitHub repo`
+    3. Wybieramy wcześniej sforkowane repozytorium
+    4. Railway automatycznie wykrył projekt Spring Boot oparty na Mavenie
+
+4. Automatyczny proces budowania aplikacji
+    1. Railway automatycznie uruchomił:
+       `mvn clean package`
+    2. Platforma pobrała wszystkie zależności Maven
+    3. Następnie został utworzony plik `.jar`
+    4. Railway uruchomił aplikację w środowisku chmurowym
+
+5. Konfiguracja aplikacji
+    1. Spring Boot domyślnie działa na porcie `8080`
+    2. Railway automatycznie wykrył port aplikacji
+    3. Nie była wymagana dodatkowa konfiguracja portów
+    4. Platforma wygenerowała publiczny adres URL
+
+### Publiczny adres aplikacji
+
+Aplikacja została pomyślnie wdrożona i działa pod adresem:
+
+`https://boot-project-binarybears.up.railway.app`
+
+Po wejściu na stronę aplikacja zwraca poprawny wynik JSON zawierający numery indeksów członków zespołu.
+
+### Napotkane problemy i rozwiązania
+
+#### Problem — brak dostępu Railway do repozytorium
+
+1. Railway nie mógł pobrać kodu źródłowego
+2. Powodem był brak odpowiednich uprawnień do repozytorium należącego do innego członka zespołu
+3. Rozwiązanie:
+    1. wykonanie Fork repozytorium
+    2. podłączenie własnego repozytorium GitHub do Railway
+
+
+### Wnioski końcowe
+
+1. Platforma Railway jest bardzo prostym rozwiązaniem do wdrażania aplikacji Spring Boot
+2. Integracja z GitHub działa automatycznie i nie wymaga skomplikowanej konfiguracji
+3. Największą zaletą platformy jest tzw. `Zero-Config Deployment`
+4. Proces wdrożenia od podłączenia repozytorium do działającej aplikacji trwał kilka minut
+5. Railway dobrze nadaje się do małych projektów edukacyjnych oraz aplikacji demonstracyjnych
+6. Dzięki wdrożeniu aplikacja jest dostępna publicznie w internecie i może być testowana przez innych użytkowników
+
         
 
