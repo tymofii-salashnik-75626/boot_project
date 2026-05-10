@@ -100,6 +100,17 @@
 10. Klikamy przycisk "Browse", dopisujemy /hello do adresu w przeglądarce i sprawdzamy poprawność działania aplikacji.
 
 
+### Wnioski końcowe
+
+1. Platforma Azure App Service umożliwia wygodne wdrażanie aplikacji Spring Boot bez konieczności ręcznej konfiguracji serwera.
+2. Integracja z GitHub Actions pozwala na pełną automatyzację procesu CI/CD oraz automatyczne budowanie projektu Maven.
+3. Największą zaletą platformy jest możliwość szybkiego publikowania aplikacji bez konieczności zarządzania infrastrukturą.
+4. Początkowe problemy z wdrażaniem przez External Git pokazały, że poprawna konfiguracja pipeline CI/CD jest kluczowa dla działania aplikacji Java w środowisku cloud.
+5. Dzięki wykorzystaniu GitHub Actions aplikacja była automatycznie kompilowana i publikowana po każdej zmianie w repozytorium.
+6. Platforma Azure App Service dobrze sprawdza się w projektach edukacyjnych oraz nowoczesnych aplikacjach webowych opartych na Spring Boot.
+7. Po zakończeniu wdrożenia aplikacja była publicznie dostępna w internecie i poprawnie obsługiwała endpoint `/hello`.
+
+
 
 ## Wdrażanie aplikacji Spring Boot na platformie Railway (Mykola Havryliuk 77332)
 
