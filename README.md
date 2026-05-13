@@ -187,14 +187,28 @@ Po wejściu na stronę aplikacja zwraca poprawny wynik JSON zawierający numery 
     2. podłączenie własnego repozytorium GitHub do Railway
 
 
-### Wnioski końcowe
+## Porównanie platform i wnioski zespołu
 
-1. Platforma Railway jest bardzo prostym rozwiązaniem do wdrażania aplikacji Spring Boot
-2. Integracja z GitHub działa automatycznie i nie wymaga skomplikowanej konfiguracji
-3. Największą zaletą platformy jest tzw. `Zero-Config Deployment`
-4. Proces wdrożenia od podłączenia repozytorium do działającej aplikacji trwał kilka minut
-5. Railway dobrze nadaje się do małych projektów edukacyjnych oraz aplikacji demonstracyjnych
-6. Dzięki wdrożeniu aplikacja jest dostępna publicznie w internecie i może być testowana przez innych użytkowników
+Nasz zespół przetestował trzy różne platformy do wdrożenia aplikacji Spring Boot: AWS Elastic Beanstalk, Azure App Service oraz Railway.
+
+### 1. AWS Elastic Beanstalk
+* Zalety: Platforma oferuje darmowe środowisko w ramach Free Tier przy użyciu instancji t3.micro. Obsługuje standardowe środowiska, w tym Corretto 21.
+* Trudności: Proces wymaga przejścia przez wieloetapowy kreator konfiguracji ról dostępu oraz sieci. Wdrożenie opierało się na ręcznym wgraniu wcześniej zbudowanego lokalnie pliku .jar. Największym technicznym niuansem była konieczność ręcznego dodania zmiennej środowiskowej SERVER_PORT z wartością 5000, ponieważ Beanstalk oczekuje ruchu na tym porcie, podczas gdy Spring Boot domyślnie startuje na porcie 8080.
+
+### 2. Azure App Service
+* Zalety: Posiada wygodny darmowy plan studencki Free F1. Oferuje bardzo zaawansowaną natywną integrację z GitHub Actions, co pozwala na pełną automatyzację procesu CI/CD (automatyczna kompilacja Mavena i przesyłanie pliku .jar przy każdej zmianie w kodzie).
+* Trudności: Opcja wdrożenia poprzez "External Git" skutkowała błędem, ponieważ wewnętrzny system KuduSync nie kompilował projektu Maven, a jedynie kopiował pliki. Poprawna konfiguracja z GitHub Actions wymagała pełnych uprawnień, co wymusiło zrobienie "Forka" oryginalnego repozytorium.
+
+### 3. Railway
+* Zalety: Zdecydowanie najszybsze rozwiązanie oferujące tzw. Zero-Config Deployment. Platforma po podłączeniu konta automatycznie rozpoznała projekt Maven, pobrała zależności, zbudowała aplikację i bez dodatkowej konfiguracji zmapowała domyślny port 8080. Proces trwał zaledwie kilka minut.
+* Trudności: Podobnie jak w Azure, wystąpił problem z uprawnieniami. Railway wymaga dostępu właściciela do repozytorium, co zablokowało pierwsze wdrożenie i zmusiło do wykonania Forka projektu na własne konto GitHub.
+
+### Ostateczne podsumowanie
+* Najłatwiejsza platforma: Railway. Zapewnił najszybsze uruchomienie aplikacji z zerową koniecznością ręcznej konfiguracji serwera czy portów.
+* Najtrudniejsza platforma: Azure App Service na początku stwarzał problemy przez brak wsparcia budowania w KuduSync. Z kolei AWS Elastic Beanstalk był najbardziej manualny pod kątem wgrywania pliku oraz wymagał pilnowania nadpisywania portów.
+* Rekomendacja: Dla małych projektów edukacyjnych nastawionych na szybki wynik, Railway jest bezkonkurencyjny. Jednak w przypadku chęci poznania profesjonalnych narzędzi CI/CD, świetnie sprawdził się zautomatyzowany pipeline GitHub Actions z Azure App Service.
+
+
 
         
 
